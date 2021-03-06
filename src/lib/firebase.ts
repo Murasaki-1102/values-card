@@ -14,4 +14,12 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-export default firebase;
+const createRoom = (roomName: string, ownerName: string) => {
+  firebase.firestore().collection("rooms").add({
+    name: roomName,
+    owner: ownerName,
+    players: [],
+  });
+};
+
+export { firebase, createRoom };
