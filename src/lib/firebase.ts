@@ -15,11 +15,13 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const createRoom = (roomName: string, ownerName: string) => {
-  firebase.firestore().collection("rooms").add({
+  const id = firebase.firestore().collection("_").doc().id;
+  firebase.firestore().collection("rooms").doc(id).set({
     name: roomName,
     owner: ownerName,
     players: [],
   });
+  return id;
 };
 
 export { firebase, createRoom };

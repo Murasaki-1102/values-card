@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Center, Box, Button, Heading, List, ListItem } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
-import { firebase, createRoom } from "../lib/firebase";
+import {
+  Center,
+  Box,
+  Button,
+  Heading,
+  List,
+  ListItem,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { firebase } from "../lib/firebase";
+import { CreateRoomModal } from "./CreateRoomModal";
 
 export const Home = () => {
   const [rooms, setRooms] = useState<any[]>([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     let unsubscribe = () => {};
@@ -14,7 +23,10 @@ export const Home = () => {
       .onSnapshot((snapshot) => {
         const _rooms: any[] = [];
         snapshot.forEach((doc) => {
-          _rooms.push(doc.data());
+          _rooms.push({
+            id: doc.id,
+            ...doc.data(),
+          });
         });
         setRooms(_rooms);
       });
@@ -25,19 +37,13 @@ export const Home = () => {
   return (
     <Center minH="100vh">
       <Box w="40rem" textAlign="center">
-        <Button
-          as={Link}
-          to="/game"
-          onClick={() => createRoom("hoge", "purple")}
-        >
-          ルームを作成する
-        </Button>
+        <Button onClick={onOpen}>ルームを作成する</Button>
 
         <Heading mt="16" fontSize="xl">
           ルーム一覧
         </Heading>
 
-        <List mt="4" borderWidth={1} h="16rem" overflowY="scroll">
+        <List mt="4" p="2" borderWidth={1} h="16rem" overflowY="scroll">
           {rooms.map((room, index) => (
             <ListItem mb="4" key={index}>
               <Button variant="outline">{room.name}</Button>
@@ -45,6 +51,8 @@ export const Home = () => {
           ))}
         </List>
       </Box>
+
+      <CreateRoomModal isOpen={isOpen} onClose={onClose} />
     </Center>
   );
 };

@@ -11,7 +11,7 @@ export const App = () => (
     <RecoilRoot>
       <Router>
         <Switch>
-          <Route path="/game">
+          <Route path="/:roomId/room">
             <Game />
           </Route>
           <Route path="/">
