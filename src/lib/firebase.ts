@@ -24,4 +24,32 @@ const createRoom = (roomName: string, ownerName: string) => {
   return id;
 };
 
-export { firebase, createRoom };
+const joinRoom = (roomId: string, name: string) => {
+  firebase
+    .auth()
+    .signInAnonymously()
+    .then((credential) => {
+      firebase
+        .firestore()
+        .collection("rooms")
+        .doc(roomId)
+        .update({
+          players: firebase.firestore.FieldValue.arrayUnion({
+            uid: credential.user?.uid,
+            name,
+            hand: [],
+          }),
+        });
+      firebase
+        .firestore()
+        .collection(`rooms/${roomId}/players`)
+        .doc(credential.user?.uid)
+        .set({
+          uid: credential.user?.uid,
+          name,
+          hand: [],
+        });
+    });
+};
+
+export { firebase, createRoom, joinRoom };

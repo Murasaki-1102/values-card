@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {
-  Center,
-  Box,
-  Button,
-  Heading,
-  List,
-  ListItem,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Center, Box, Button, Heading, List, ListItem } from "@chakra-ui/react";
 import { firebase } from "../lib/firebase";
 import { CreateRoomModal } from "./CreateRoomModal";
+import { JoinRoomModal } from "./JoinRoomModal";
+import { useModal } from "../hooks/useModal";
 
 export const Home = () => {
   const [rooms, setRooms] = useState<any[]>([]);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { openModal, closeModal } = useModal();
 
   useEffect(() => {
     let unsubscribe = () => {};
@@ -37,7 +31,13 @@ export const Home = () => {
   return (
     <Center minH="100vh">
       <Box w="40rem" textAlign="center">
-        <Button onClick={onOpen}>ルームを作成する</Button>
+        <Button
+          onClick={() => {
+            openModal(CreateRoomModal, { onClose: closeModal });
+          }}
+        >
+          ルームを作成する
+        </Button>
 
         <Heading mt="16" fontSize="xl">
           ルーム一覧
@@ -46,13 +46,18 @@ export const Home = () => {
         <List mt="4" p="2" borderWidth={1} h="16rem" overflowY="scroll">
           {rooms.map((room, index) => (
             <ListItem mb="4" key={index}>
-              <Button variant="outline">{room.name}</Button>
+              <Button
+                variant="outline"
+                onClick={() =>
+                  openModal(JoinRoomModal, { room, onClose: closeModal })
+                }
+              >
+                {room.name}
+              </Button>
             </ListItem>
           ))}
         </List>
       </Box>
-
-      <CreateRoomModal isOpen={isOpen} onClose={onClose} />
     </Center>
   );
 };
