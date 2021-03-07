@@ -33,7 +33,12 @@ export const JoinRoomModal: VFC<JoinRoomModalProps> = ({ room, onClose }) => {
   };
 
   return (
-    <Modal isOpen={true} onClose={onClose} initialFocusRef={initialFocusRef}>
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      initialFocusRef={initialFocusRef}
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
