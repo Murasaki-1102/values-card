@@ -17,14 +17,10 @@ import { useHistory } from "react-router-dom";
 import { createRoom } from "../lib/firebase";
 
 type CreateRoomModalProps = {
-  isOpen: boolean;
   onClose: () => void;
 };
 
-export const CreateRoomModal: VFC<CreateRoomModalProps> = ({
-  isOpen,
-  onClose,
-}) => {
+export const CreateRoomModal: VFC<CreateRoomModalProps> = ({ onClose }) => {
   const [roomName, setRoomName] = useState("");
   const [playerName, setPlayerName] = useState("");
   const initialFocusRef = useRef(null);
@@ -32,11 +28,12 @@ export const CreateRoomModal: VFC<CreateRoomModalProps> = ({
 
   const handleSubmit = () => {
     const id = createRoom(roomName, playerName);
+    onClose();
     push(`/${id}/room`);
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={initialFocusRef}>
+    <Modal isOpen={true} onClose={onClose} initialFocusRef={initialFocusRef}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>

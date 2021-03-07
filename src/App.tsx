@@ -5,6 +5,7 @@ import { RecoilRoot } from "recoil";
 import { Game } from "./components/Game";
 import { Home } from "./components/Home";
 import "./lib/firebase";
+import { ModalManager } from "./components/ModalManager";
 
 export const App = () => (
   <ChakraProvider theme={theme}>
@@ -18,6 +19,7 @@ export const App = () => (
             <Home />
           </Route>
         </Switch>
+        <ModalManager />
       </Router>
     </RecoilRoot>
   </ChakraProvider>
