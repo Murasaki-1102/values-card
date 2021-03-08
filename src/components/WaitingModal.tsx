@@ -7,10 +7,11 @@ import {
   ModalBody,
   Spinner,
 } from "@chakra-ui/react";
+import { Player } from "../types";
 
 type WaitingModalProps = {
   onClose: () => void;
-  players: any[];
+  players: Player[];
 };
 
 export const WaitingModal: VFC<WaitingModalProps> = ({ onClose, players }) => (
