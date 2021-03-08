@@ -45,16 +45,20 @@ export const Home = () => {
 
         <List mt="4" p="2" borderWidth={1} h="16rem" overflowY="scroll">
           {rooms.map((room, index) => (
-            <ListItem mb="4" key={index}>
-              <Button
-                variant="outline"
-                onClick={() =>
-                  openModal(JoinRoomModal, { room, onClose: closeModal })
-                }
-              >
-                {room.name}
-              </Button>
-            </ListItem>
+            <React.Fragment key={index}>
+              {room.players.length !== 4 && (
+                <ListItem mb="4" key={index}>
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      openModal(JoinRoomModal, { room, onClose: closeModal })
+                    }
+                  >
+                    {`${room.name} ${room.players.length}/4`}
+                  </Button>
+                </ListItem>
+              )}
+            </React.Fragment>
           ))}
         </List>
       </Box>
