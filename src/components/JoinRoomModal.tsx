@@ -14,7 +14,7 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
-import { joinRoom } from "../lib/firebase";
+import { useRoom } from "../hooks/useRoom";
 
 type JoinRoomModalProps = {
   room: any;
@@ -25,6 +25,7 @@ export const JoinRoomModal: VFC<JoinRoomModalProps> = ({ room, onClose }) => {
   const [playerName, setPlayerName] = useState("");
   const initialFocusRef = useRef(null);
   const { push } = useHistory();
+  const { joinRoom } = useRoom();
 
   const handleSubmit = () => {
     joinRoom(room.id, playerName);

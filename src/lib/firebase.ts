@@ -14,42 +14,6 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-const createRoom = (roomName: string, ownerName: string) => {
-  const id = firebase.firestore().collection("_").doc().id;
-  firebase.firestore().collection("rooms").doc(id).set({
-    name: roomName,
-    owner: ownerName,
-    players: [],
-  });
-  return id;
-};
+const db = firebase.firestore();
 
-const joinRoom = (roomId: string, name: string) => {
-  firebase
-    .auth()
-    .signInAnonymously()
-    .then((credential) => {
-      firebase
-        .firestore()
-        .collection("rooms")
-        .doc(roomId)
-        .update({
-          players: firebase.firestore.FieldValue.arrayUnion({
-            uid: credential.user?.uid,
-            name,
-            hand: [],
-          }),
-        });
-      firebase
-        .firestore()
-        .collection(`rooms/${roomId}/players`)
-        .doc(credential.user?.uid)
-        .set({
-          uid: credential.user?.uid,
-          name,
-          hand: [],
-        });
-    });
-};
-
-export { firebase, createRoom, joinRoom };
+export { firebase, db };

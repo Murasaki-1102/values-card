@@ -14,7 +14,7 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
-import { createRoom } from "../lib/firebase";
+import { useRoom } from "../hooks/useRoom";
 
 type CreateRoomModalProps = {
   onClose: () => void;
@@ -25,6 +25,7 @@ export const CreateRoomModal: VFC<CreateRoomModalProps> = ({ onClose }) => {
   const [playerName, setPlayerName] = useState("");
   const initialFocusRef = useRef(null);
   const { push } = useHistory();
+  const { createRoom } = useRoom();
 
   const handleSubmit = () => {
     const id = createRoom(roomName, playerName);
