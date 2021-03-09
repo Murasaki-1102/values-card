@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { valueCards } from "../config";
 import { firebase, db } from "../lib/firebase";
 import { Room } from "../types";
-import { randomShuffle } from "../utils/card";
+import { randomShuffle } from "../utils/index";
 
 export const useRoom = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -44,15 +44,12 @@ export const useRoom = () => {
 
         const collection = db.collection(`rooms/${id}/players`);
 
-        const documentLength = await collection
-          .get()
-          .then((docs) => docs.size + 1);
-
         collection.doc(credential.user?.uid).set({
-          order: documentLength,
+          order: 1,
           uid: credential.user?.uid,
           name: ownerName,
           hand: [],
+          isCurrentPlayer: true,
         });
       });
 
@@ -81,6 +78,7 @@ export const useRoom = () => {
           uid: credential.user?.uid,
           name,
           hand: [],
+          isCurrentPlayer: false,
         });
       });
   };

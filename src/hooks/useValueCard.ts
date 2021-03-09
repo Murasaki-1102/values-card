@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { firebase, db } from "../lib/firebase";
 import { Room, Player } from "../types";
+import { getNextOrder } from "../utils";
 
 export const useValueCard = () => {
   const [gameState, setGameState] = useState<Room>({
@@ -16,6 +17,8 @@ export const useValueCard = () => {
 
   const { roomId } = useParams<{ roomId: string }>();
   const { currentUser } = firebase.auth();
+
+  const me = players.find((player) => player.uid === currentUser?.uid);
 
   const roomsRef = db.collection("/rooms");
 
@@ -59,6 +62,7 @@ export const useValueCard = () => {
           });
       });
   };
+
   const handleDiscard = (card: string) => {
     if (!currentUser) return;
     roomsRef.doc(roomId).update({
@@ -68,10 +72,17 @@ export const useValueCard = () => {
       .doc(currentUser.uid)
       .update({
         hand: firebase.firestore.FieldValue.arrayRemove(card),
+        isCurrentPlayer: false,
       });
-  };
 
-  const me = players.find((player) => player.uid === currentUser?.uid);
+    const nextPlayer = players.find(
+      (player) => player.order === getNextOrder(me?.order!)
+    );
+
+    db.collection(`/rooms/${roomId}/players`).doc(nextPlayer?.uid).update({
+      isCurrentPlayer: true,
+    });
+  };
 
   return {
     gameState,

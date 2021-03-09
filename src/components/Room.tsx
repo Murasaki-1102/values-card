@@ -1,9 +1,10 @@
 import React, { VFC, useEffect } from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Text, Center, Spinner } from "@chakra-ui/react";
 import { useModal } from "../hooks/useModal";
 import { WaitingModal } from "./WaitingModal";
 import { useValueCard } from "../hooks/useValueCard";
 import { Card } from "./Card";
+import { getFrontOrder, getNextOrder, getPrevOrder } from "../utils";
 
 export const Room: VFC = () => {
   const { gameState, players, me, handleDraw, handleDiscard } = useValueCard();
@@ -24,22 +25,6 @@ export const Room: VFC = () => {
 
   const hand = me?.hand;
 
-  const getNextOrder = (order: number): number => {
-    if (order === 4) return 1;
-    return order + 1;
-  };
-
-  const getPrevOrder = (order: number): number => {
-    if (order === 1) return 4;
-    return order - 1;
-  };
-
-  const getFrontOrder = (order: number): number => {
-    if (order === 3) return 1;
-    if (order === 4) return 2;
-    return order + 2;
-  };
-
   const leftPlayer = players.find(
     (player) => player.order === getNextOrder(me?.order!)
   );
@@ -51,6 +36,13 @@ export const Room: VFC = () => {
     (player) => player.order === getFrontOrder(me?.order!)
   );
 
+  const currentPlayer = players.find((player) => player.isCurrentPlayer);
+
+  const navigationText =
+    gameState.deck.length === 0
+      ? "ゲーム終了！"
+      : `次は${currentPlayer?.name}の番です`;
+
   if (gameState.players.length !== 4) return null;
 
   return (
@@ -61,45 +53,81 @@ export const Room: VFC = () => {
       justifyContent="space-between"
     >
       <Flex justifyContent="center">
-        {frontPlayer?.hand.map((_, index) => (
-          <Card key={index} />
+        {frontPlayer?.hand.map((card, index) => (
+          <Card key={index} value={card} isOpen={gameState.deck.length === 0} />
         ))}
       </Flex>
 
       <Flex justifyContent="space-between" alignItems="center">
         <Box>
-          {leftPlayer?.hand?.map((_, index) => (
-            <Card key={index} isHorizontal />
+          {leftPlayer?.hand?.map((card, index) => (
+            <Card
+              key={index}
+              value={card}
+              isHorizontal
+              isOpen={gameState.deck.length === 0}
+            />
           ))}
         </Box>
 
-        <Flex w="32rem" justifyContent="space-between" alignItems="center">
-          <Card
-            value={gameState?.deck?.length}
-            onClick={() => {
-              if (hand?.length! >= 6) return;
-              handleDraw();
-            }}
-          />
+        <Box>
+          {navigationText ? (
+            <Text textAlign="center" fontSize="2xl">
+              {navigationText}
+            </Text>
+          ) : (
+            <Center>
+              <Spinner />
+            </Center>
+          )}
 
           <Flex
-            w="20rem"
-            h="20rem"
-            wrap="wrap"
-            alignContent="flex-start"
-            pl="1rem"
-            overflowY="scroll"
-            borderWidth={1}
+            mt="2"
+            w="32rem"
+            justifyContent="space-between"
+            alignItems="center"
           >
-            {[...gameState.graveyards].reverse().map((graveyard, index) => (
-              <Card key={index} value={graveyard} />
-            ))}
+            <Box>
+              <Text textAlign="center">山札</Text>
+              <Card
+                isOpen
+                value={gameState?.deck?.length}
+                onClick={() => {
+                  if (!me?.isCurrentPlayer) return;
+                  if (hand?.length! >= 6) return;
+                  handleDraw();
+                }}
+              />
+            </Box>
+
+            <Box>
+              <Text textAlign="center">捨てたカード</Text>
+              <Flex
+                w="20rem"
+                h="22rem"
+                wrap="wrap"
+                alignContent="flex-start"
+                pl="1rem"
+                py="1rem"
+                overflowY="scroll"
+                borderWidth={1}
+              >
+                {[...gameState.graveyards].reverse().map((graveyard, index) => (
+                  <Card key={index} value={graveyard} isOpen />
+                ))}
+              </Flex>
+            </Box>
           </Flex>
-        </Flex>
+        </Box>
 
         <Box>
-          {rightPlayer?.hand.map((_, index) => (
-            <Card key={index} isHorizontal />
+          {rightPlayer?.hand.map((card, index) => (
+            <Card
+              key={index}
+              value={card}
+              isHorizontal
+              isOpen={gameState.deck.length === 0}
+            />
           ))}
         </Box>
       </Flex>
@@ -109,7 +137,9 @@ export const Room: VFC = () => {
           <Card
             key={index}
             value={card}
+            isOpen
             onClick={() => {
+              if (!me?.isCurrentPlayer) return;
               if (hand?.length >= 6) {
                 handleDiscard(card);
               }
