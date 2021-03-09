@@ -14,7 +14,14 @@ import { Card } from "./Card";
 import { getFrontOrder, getNextOrder, getPrevOrder } from "../utils";
 
 export const Room: VFC = () => {
-  const { gameState, players, me, handleDraw, handleDiscard } = useValueCard();
+  const {
+    gameState,
+    players,
+    me,
+    handleDraw,
+    handleInitialDraw,
+    handleDiscard,
+  } = useValueCard();
 
   const { openModal, closeModal } = useModal();
   const [isLargerThan400] = useMediaQuery("(min-width: 400px)");
@@ -26,10 +33,15 @@ export const Room: VFC = () => {
         players,
       });
     } else {
+      // handleInitialDraw();
       closeModal();
     }
     // eslint-disable-next-line
   }, [players]);
+
+  useEffect(() => {
+    if (me?.hand.length === 0) handleInitialDraw();
+  }, [me?.hand]);
 
   const hand = me?.hand;
 
@@ -60,7 +72,7 @@ export const Room: VFC = () => {
       display="flex"
       flexDir="column"
       justifyContent="space-between"
-      p={isLargerThan400 ? undefined : undefined}
+      p={isLargerThan400 ? undefined : "4"}
     >
       {isLargerThan400 && (
         <Flex justifyContent="center">
@@ -112,7 +124,7 @@ export const Room: VFC = () => {
             <Box>
               <Text textAlign="center">捨てたカード</Text>
               <Flex
-                w={isLargerThan400 ? "20rem" : undefined}
+                w={isLargerThan400 ? "20rem" : "14rem"}
                 h={isLargerThan400 ? "22rem" : "32rem"}
                 wrap="wrap"
                 alignContent="flex-start"

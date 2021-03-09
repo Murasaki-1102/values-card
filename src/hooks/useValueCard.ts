@@ -63,6 +63,24 @@ export const useValueCard = () => {
       });
   };
 
+  const handleInitialDraw = () => {
+    if (!currentUser) return;
+    roomsRef
+      .doc(roomId)
+      .get()
+      .then((doc) => {
+        const cards = doc?.data()?.deck.slice(0, 5);
+        roomsRef.doc(roomId).update({
+          deck: firebase.firestore.FieldValue.arrayRemove(...cards),
+        });
+        db.collection(`/rooms/${roomId}/players`)
+          .doc(currentUser.uid)
+          .update({
+            hand: firebase.firestore.FieldValue.arrayUnion(...cards),
+          });
+      });
+  };
+
   const handleDiscard = (card: string) => {
     if (!currentUser) return;
     roomsRef.doc(roomId).update({
@@ -89,6 +107,7 @@ export const useValueCard = () => {
     players,
     me,
     handleDraw,
+    handleInitialDraw,
     handleDiscard,
   };
 };
