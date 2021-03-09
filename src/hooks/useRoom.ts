@@ -78,7 +78,7 @@ export const useRoom = () => {
 
         if (beforeDocumentLength !== afterDocumentLength) {
           roomsRef.doc(roomId).update({
-            playersLength: afterDocumentLength,
+            playersLength: beforeDocumentLength,
           });
         }
       });
