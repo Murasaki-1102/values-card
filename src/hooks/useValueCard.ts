@@ -16,6 +16,7 @@ export const useValueCard = () => {
   const [players, setPlayers] = useState<Player[]>([]);
 
   const { roomId } = useParams<{ roomId: string }>();
+
   const { currentUser } = firebase.auth();
 
   const me = players.find((player) => player.uid === currentUser?.uid);
@@ -102,6 +103,17 @@ export const useValueCard = () => {
     });
   };
 
+  const checkExistsRoom = () => {
+    const isExistsRoom = roomsRef
+      .doc(roomId)
+      .get()
+      .then((doc) => {
+        if (doc.exists) return true;
+        return false;
+      });
+    return isExistsRoom;
+  };
+
   return {
     gameState,
     players,
@@ -109,5 +121,6 @@ export const useValueCard = () => {
     handleDraw,
     handleInitialDraw,
     handleDiscard,
+    checkExistsRoom,
   };
 };

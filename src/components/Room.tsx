@@ -12,6 +12,7 @@ import { WaitingModal } from "./WaitingModal";
 import { useValueCard } from "../hooks/useValueCard";
 import { Card } from "./Card";
 import { getFrontOrder, getNextOrder, getPrevOrder } from "../utils";
+import { useHistory } from "react-router-dom";
 
 export const Room: VFC = () => {
   const {
@@ -21,10 +22,23 @@ export const Room: VFC = () => {
     handleDraw,
     handleInitialDraw,
     handleDiscard,
+    checkExistsRoom,
   } = useValueCard();
 
   const { openModal, closeModal } = useModal();
+  const { push } = useHistory();
   const [isLargerThan400] = useMediaQuery("(min-width: 400px)");
+
+  useEffect(() => {
+    (async () => {
+      const isExistsRoom = await checkExistsRoom();
+      if (!isExistsRoom) {
+        closeModal();
+        push("/");
+      }
+    })();
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     if (players.length !== 4) {
@@ -33,7 +47,6 @@ export const Room: VFC = () => {
         players,
       });
     } else {
-      // handleInitialDraw();
       closeModal();
     }
     // eslint-disable-next-line
@@ -41,6 +54,7 @@ export const Room: VFC = () => {
 
   useEffect(() => {
     if (me?.hand.length === 0) handleInitialDraw();
+    // eslint-disable-next-line
   }, [me?.hand]);
 
   const hand = me?.hand;
