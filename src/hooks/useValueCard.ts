@@ -5,6 +5,7 @@ import { Room, Player } from "../types";
 
 export const useValueCard = () => {
   const [gameState, setGameState] = useState<Room>({
+    id: "",
     name: "",
     owner: "",
     deck: [],
@@ -21,7 +22,10 @@ export const useValueCard = () => {
   useEffect(() => {
     const unsubscribe = () => {
       roomsRef.doc(roomId).onSnapshot((doc) => {
-        setGameState(doc.data() as Room);
+        setGameState({
+          ...(doc.data() as Room),
+          id: doc.id,
+        });
       });
 
       db.collection(`/rooms/${roomId}/players`).onSnapshot((docs) => {
