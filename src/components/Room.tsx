@@ -12,16 +12,16 @@ export const Room: VFC = () => {
   const { openModal, closeModal } = useModal();
 
   useEffect(() => {
-    if (gameState.players.length !== 4) {
+    if (players.length !== 4) {
       openModal(WaitingModal, {
         onClose: closeModal,
-        players: gameState.players,
+        players,
       });
     } else {
       closeModal();
     }
     // eslint-disable-next-line
-  }, [gameState]);
+  }, [players]);
 
   const hand = me?.hand;
 
@@ -38,12 +38,13 @@ export const Room: VFC = () => {
 
   const currentPlayer = players.find((player) => player.isCurrentPlayer);
 
-  const navigationText =
-    gameState.deck.length === 0
-      ? "ゲーム終了！"
-      : `次は${currentPlayer?.name}の番です`;
+  const isFinish = gameState?.deck?.length === 0;
 
-  if (gameState.players.length !== 4) return null;
+  const navigationText = isFinish
+    ? "ゲーム終了！"
+    : `次は${currentPlayer?.name}の番です`;
+
+  if (players?.length !== 4) return null;
 
   return (
     <Box
@@ -54,19 +55,14 @@ export const Room: VFC = () => {
     >
       <Flex justifyContent="center">
         {frontPlayer?.hand.map((card, index) => (
-          <Card key={index} value={card} isOpen={gameState.deck.length === 0} />
+          <Card key={index} value={card} isOpen={isFinish} />
         ))}
       </Flex>
 
       <Flex justifyContent="space-between" alignItems="center">
         <Box>
           {leftPlayer?.hand?.map((card, index) => (
-            <Card
-              key={index}
-              value={card}
-              isHorizontal
-              isOpen={gameState.deck.length === 0}
-            />
+            <Card key={index} value={card} isHorizontal isOpen={isFinish} />
           ))}
         </Box>
 
@@ -122,12 +118,7 @@ export const Room: VFC = () => {
 
         <Box>
           {rightPlayer?.hand.map((card, index) => (
-            <Card
-              key={index}
-              value={card}
-              isHorizontal
-              isOpen={gameState.deck.length === 0}
-            />
+            <Card key={index} value={card} isHorizontal isOpen={isFinish} />
           ))}
         </Box>
       </Flex>

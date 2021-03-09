@@ -12,5 +12,5 @@ export type Room = {
   owner: string;
   deck: string[];
   graveyards: string[];
-  players: Player[];
+  playersLength: number;
 };

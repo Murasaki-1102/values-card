@@ -9,19 +9,16 @@ export const useRoom = () => {
 
   useEffect(() => {
     let unsubscribe = () => {};
-    unsubscribe = firebase
-      .firestore()
-      .collection("/rooms")
-      .onSnapshot((snapshot) => {
-        const _rooms: any[] = [];
-        snapshot.forEach((doc) => {
-          _rooms.push({
-            id: doc.id,
-            ...doc.data(),
-          });
+    unsubscribe = db.collection("/rooms").onSnapshot((snapshot) => {
+      const _rooms: any[] = [];
+      snapshot.forEach((doc) => {
+        _rooms.push({
+          id: doc.id,
+          ...doc.data(),
         });
-        setRooms(_rooms);
       });
+      setRooms(_rooms);
+    });
 
     return unsubscribe;
   }, []);
@@ -37,7 +34,7 @@ export const useRoom = () => {
         await roomsRef.doc(id).set({
           name: roomName,
           owner: ownerName,
-          players: [{ uid: credential.user?.uid, name: ownerName, hand: [] }],
+          playersLength: 1,
           deck: randomShuffle(valueCards),
           graveyards: [],
         });
@@ -61,25 +58,29 @@ export const useRoom = () => {
       .auth()
       .signInAnonymously()
       .then(async (credential) => {
-        roomsRef.doc(roomId).update({
-          players: firebase.firestore.FieldValue.arrayUnion({
-            uid: credential.user?.uid,
-            name,
-          }),
-        });
         const collection = db.collection(`rooms/${roomId}/players`);
 
-        const documentLength = await collection
+        const beforeDocumentLength = await collection
           .get()
           .then((docs) => docs.size + 1);
 
-        collection.doc(credential.user?.uid).set({
-          order: documentLength,
+        await collection.doc(credential.user?.uid).set({
+          order: beforeDocumentLength,
           uid: credential.user?.uid,
           name,
           hand: [],
           isCurrentPlayer: false,
         });
+
+        const afterDocumentLength = await collection
+          .get()
+          .then((docs) => docs.size + 1);
+
+        if (beforeDocumentLength !== afterDocumentLength) {
+          roomsRef.doc(roomId).update({
+            playersLength: afterDocumentLength,
+          });
+        }
       });
   };
 

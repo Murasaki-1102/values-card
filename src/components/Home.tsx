@@ -27,7 +27,7 @@ export const Home = () => {
         <List mt="4" p="2" borderWidth={1} h="16rem" overflowY="scroll">
           {rooms.map((room, index) => (
             <React.Fragment key={index}>
-              {room.players.length !== 4 && (
+              {room.playersLength !== 4 && (
                 <ListItem mb="4" key={index}>
                   <Button
                     variant="outline"
@@ -35,7 +35,7 @@ export const Home = () => {
                       openModal(JoinRoomModal, { room, onClose: closeModal })
                     }
                   >
-                    {`${room.name} ${room.players.length}/4`}
+                    {`${room.name} ${room.playersLength}/4`}
                   </Button>
                 </ListItem>
               )}

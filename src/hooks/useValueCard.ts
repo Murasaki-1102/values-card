@@ -11,7 +11,7 @@ export const useValueCard = () => {
     owner: "",
     deck: [],
     graveyards: [],
-    players: [],
+    playersLength: 0,
   });
   const [players, setPlayers] = useState<Player[]>([]);
 
