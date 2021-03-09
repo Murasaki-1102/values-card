@@ -1,8 +1,31 @@
+import { useState, useEffect } from "react";
 import { valueCards } from "../config";
 import { firebase, db } from "../lib/firebase";
+import { Room } from "../types";
 import { randomShuffle } from "../utils/card";
 
 export const useRoom = () => {
+  const [rooms, setRooms] = useState<Room[]>([]);
+
+  useEffect(() => {
+    let unsubscribe = () => {};
+    unsubscribe = firebase
+      .firestore()
+      .collection("/rooms")
+      .onSnapshot((snapshot) => {
+        const _rooms: any[] = [];
+        snapshot.forEach((doc) => {
+          _rooms.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+        setRooms(_rooms);
+      });
+
+    return unsubscribe;
+  }, []);
+
   const roomsRef = db.collection("/rooms");
 
   const createRoom = (roomName: string, ownerName: string): string => {
@@ -63,6 +86,7 @@ export const useRoom = () => {
   };
 
   return {
+    rooms,
     createRoom,
     joinRoom,
   };

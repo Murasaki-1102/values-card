@@ -1,32 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Center, Box, Button, Heading, List, ListItem } from "@chakra-ui/react";
-import { firebase } from "../lib/firebase";
 import { CreateRoomModal } from "./CreateRoomModal";
 import { JoinRoomModal } from "./JoinRoomModal";
 import { useModal } from "../hooks/useModal";
+import { useRoom } from "../hooks/useRoom";
 
 export const Home = () => {
-  const [rooms, setRooms] = useState<any[]>([]);
   const { openModal, closeModal } = useModal();
-
-  useEffect(() => {
-    let unsubscribe = () => {};
-    unsubscribe = firebase
-      .firestore()
-      .collection("rooms")
-      .onSnapshot((snapshot) => {
-        const _rooms: any[] = [];
-        snapshot.forEach((doc) => {
-          _rooms.push({
-            id: doc.id,
-            ...doc.data(),
-          });
-        });
-        setRooms(_rooms);
-      });
-
-    return unsubscribe;
-  }, []);
+  const { rooms } = useRoom();
 
   return (
     <Center minH="100vh">
