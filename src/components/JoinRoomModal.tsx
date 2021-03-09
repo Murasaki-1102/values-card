@@ -15,9 +15,10 @@ import {
 } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import { useRoom } from "../hooks/useRoom";
+import { Room } from "../types";
 
 type JoinRoomModalProps = {
-  room: any;
+  room: Room;
   onClose: () => void;
 };
 
