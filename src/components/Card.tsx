@@ -1,18 +1,33 @@
 import React, { VFC } from "react";
 import { Flex, Text } from "@chakra-ui/react";
 
-export const Card: VFC = () => {
+type CardProps = {
+  value?: string | number;
+  onClick?: () => void;
+  isHorizontal?: boolean;
+};
+
+export const Card: VFC<CardProps> = ({ value, onClick, isHorizontal }) => {
+  const h = isHorizontal ? "4rem" : value ? "8rem" : "6rem";
+  const w = isHorizontal ? "6rem" : value ? "6rem" : "4rem";
+
   return (
     <Flex
-      h="12rem"
-      w="8rem"
+      h={h}
+      w={w}
       justifyContent="center"
       alignItems="center"
       borderRadius="md"
       boxShadow="base"
       borderWidth={1}
+      bg={value && typeof value === "string" ? undefined : "green.100"}
+      onClick={onClick}
     >
-      <Text fontSize="sm">リーダーシップ</Text>
+      {value && (
+        <Text fontSize="sm" textAlign="center">
+          {value}
+        </Text>
+      )}
     </Flex>
   );
 };
