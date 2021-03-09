@@ -45,6 +45,7 @@ export const Room: VFC = () => {
       openModal(WaitingModal, {
         onClose: closeModal,
         players,
+        gameState,
       });
     } else {
       closeModal();
