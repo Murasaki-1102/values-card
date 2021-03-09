@@ -17,11 +17,13 @@ export const Card: VFC<CardProps> = ({
   const getHeight = () => {
     if (isOpen && isHorizontal) return "6rem";
     if (isHorizontal) return "4rem";
+    if (!isOpen) return "6rem";
     return "8rem";
   };
   const getWidth = () => {
     if (isOpen && isHorizontal) return "8rem";
     if (isHorizontal) return "6rem";
+    if (!isOpen) return "4rem";
     return "6rem";
   };
   const h = getHeight();
