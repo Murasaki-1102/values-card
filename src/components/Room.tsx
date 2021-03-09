@@ -1,5 +1,12 @@
 import React, { VFC, useEffect } from "react";
-import { Box, Flex, Text, Center, Spinner } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Text,
+  Center,
+  Spinner,
+  useMediaQuery,
+} from "@chakra-ui/react";
 import { useModal } from "../hooks/useModal";
 import { WaitingModal } from "./WaitingModal";
 import { useValueCard } from "../hooks/useValueCard";
@@ -10,6 +17,7 @@ export const Room: VFC = () => {
   const { gameState, players, me, handleDraw, handleDiscard } = useValueCard();
 
   const { openModal, closeModal } = useModal();
+  const [isLargerThan400] = useMediaQuery("(min-width: 400px)");
 
   useEffect(() => {
     if (players.length !== 4) {
@@ -52,21 +60,26 @@ export const Room: VFC = () => {
       display="flex"
       flexDir="column"
       justifyContent="space-between"
+      p={isLargerThan400 ? undefined : undefined}
     >
-      <Flex justifyContent="center">
-        {frontPlayer?.hand.map((card, index) => (
-          <Card key={index} value={card} isOpen={isFinish} />
-        ))}
-      </Flex>
+      {isLargerThan400 && (
+        <Flex justifyContent="center">
+          {frontPlayer?.hand.map((card, index) => (
+            <Card key={index} value={card} isOpen={isFinish} />
+          ))}
+        </Flex>
+      )}
 
       <Flex justifyContent="space-between" alignItems="center">
-        <Box>
-          {leftPlayer?.hand?.map((card, index) => (
-            <Card key={index} value={card} isHorizontal isOpen={isFinish} />
-          ))}
-        </Box>
+        {isLargerThan400 && (
+          <Box>
+            {leftPlayer?.hand?.map((card, index) => (
+              <Card key={index} value={card} isHorizontal isOpen={isFinish} />
+            ))}
+          </Box>
+        )}
 
-        <Box>
+        <Box pt={isLargerThan400 ? undefined : "12"}>
           {navigationText ? (
             <Text textAlign="center" fontSize="2xl">
               {navigationText}
@@ -79,7 +92,7 @@ export const Room: VFC = () => {
 
           <Flex
             mt="2"
-            w="32rem"
+            w={isLargerThan400 ? "42rem" : undefined}
             justifyContent="space-between"
             alignItems="center"
           >
@@ -99,8 +112,8 @@ export const Room: VFC = () => {
             <Box>
               <Text textAlign="center">捨てたカード</Text>
               <Flex
-                w="20rem"
-                h="22rem"
+                w={isLargerThan400 ? "20rem" : undefined}
+                h={isLargerThan400 ? "22rem" : "32rem"}
                 wrap="wrap"
                 alignContent="flex-start"
                 pl="1rem"
@@ -116,11 +129,13 @@ export const Room: VFC = () => {
           </Flex>
         </Box>
 
-        <Box>
-          {rightPlayer?.hand.map((card, index) => (
-            <Card key={index} value={card} isHorizontal isOpen={isFinish} />
-          ))}
-        </Box>
+        {isLargerThan400 && (
+          <Box>
+            {rightPlayer?.hand.map((card, index) => (
+              <Card key={index} value={card} isHorizontal isOpen={isFinish} />
+            ))}
+          </Box>
+        )}
       </Flex>
 
       <Flex justifyContent="center">

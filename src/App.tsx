@@ -6,11 +6,13 @@ import { Home } from "./components/Home";
 import { ModalManager } from "./components/ModalManager";
 import { Room } from "./components/Room";
 import "./lib/firebase";
+import { ColorModeSwitcher } from "./components/ColorModeSwitcher";
 
 export const App = () => (
   <ChakraProvider theme={theme}>
     <RecoilRoot>
       <Router>
+        <ColorModeSwitcher />
         <Switch>
           <Route path="/:roomId/room">
             <Room />
